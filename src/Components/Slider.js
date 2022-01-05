@@ -84,7 +84,6 @@ const Wrap = styled.div`
       rgb(0 0 0 / 73%) 0px 16px 10px -10px;
     border: 4px solid transparent;
     transition: 300s;
-
     &:hover {
       border: 4px solid white;
       cursor: pointer;

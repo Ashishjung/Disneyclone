@@ -2,12 +2,15 @@ import React from "react";
 import styled from "styled-components";
 import Imgslider from "../Slider.js";
 import Viewers from "../Viewers.js";
+import Movies from "../Movies.js";
+
 export const Home = () => {
   return (
     <>
       <Container>
         <Imgslider />
         <Viewers />
+        <Movies />
       </Container>
     </>
   );

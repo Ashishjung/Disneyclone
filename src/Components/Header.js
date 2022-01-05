@@ -1,37 +1,97 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectUsername,
+  selectUserEmail,
+  selectUserPhoto,
+  setUserlogindetail,
+} from "./features/users/userSlice";
+import auth from "../firebase";
+import { provider } from "../firebase";
+import { signInWithPopup } from "firebase/auth";
 const Header = () => {
+  const dispatch = useDispatch();
+  const username = useSelector(selectUsername);
+  const useremail = useSelector(selectUserEmail);
+  const userphoto = useSelector(selectUserPhoto);
+  const navigate = useNavigate();
+  const handleAuth = () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        setuser(result.user);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const setuser = (user) => {
+    dispatch(
+      setUserlogindetail({
+        name: user.displayName,
+        email: user.email,
+        photo: user.photoURL,
+      })
+    );
+  };
+  useEffect(() => {
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        setuser(user);
+        navigate("/");
+      }
+    });
+  });
   return (
     <>
       <Nav>
         <Logo src="/images/logo.svg"></Logo>
-        <NavItem>
-          <a>
-            <img src="images/home-icon.svg" alt="home" />
-            <span>Home</span>
-          </a>
-          <a>
-            <img src="images/search-icon.svg" alt="Search" />
-            <span>Search</span>
-          </a>
-          <a>
-            <img src="images/watchlist-icon.svg" alt="WatchList " />
-            <span>Watch list</span>
-          </a>
-          <a>
-            <img src="images/original-icon.svg" alt="Original" />
-            <span>Originals</span>
-          </a>
-          <a>
-            <img src="images/movie-icon.svg" alt="movies" />
-            <span>Movies</span>
-          </a>
-          <a>
-            <img src="images/series-icon.svg" alt="series" />
-            <span>Series</span>
-          </a>
-        </NavItem>
-        <Userimg src="images/slider-scale.jpg" alt="Slider"></Userimg>
+        {!username ? (
+          <Userimg
+            onClick={() => {
+              handleAuth();
+            }}
+          >
+            LOGIN
+          </Userimg>
+        ) : (
+          <>
+            <NavItem>
+              <a>
+                <img src="images/home-icon.svg" alt="home" />
+                <span>Home</span>
+              </a>
+              <a>
+                <img src="images/search-icon.svg" alt="Search" />
+                <span>Search</span>
+              </a>
+              <a>
+                <img src="images/watchlist-icon.svg" alt="WatchList " />
+                <span>Watch list</span>
+              </a>
+              <a>
+                <img src="images/original-icon.svg" alt="Original" />
+                <span>Originals</span>
+              </a>
+              <a>
+                <img src="images/movie-icon.svg" alt="movies" />
+                <span>Movies</span>
+              </a>
+              <a>
+                <img src="images/series-icon.svg" alt="series" />
+                <span>Series</span>
+              </a>
+            </NavItem>
+            <Imageuser
+              src={userphoto}
+              alt={useremail}
+              onClick={() => {
+                handleAuth();
+              }}
+            ></Imageuser>
+          </>
+        )}
       </Nav>
     </>
   );
@@ -45,6 +105,7 @@ const Nav = styled.div`
   align-items: center;
   padding: 0 36px;
   overflow-x: hidden;
+  justify-content: space-between;
 `;
 const Logo = styled.img`
   width: 80px;
@@ -89,7 +150,18 @@ const NavItem = styled.div`
     }
   }
 `;
-const Userimg = styled.img`
+const Userimg = styled.button`
+  width: 75px;
+  height: 35px;
+  border-radius: 5%;
+  cursor: pointer;
+  outline: none;
+  background: black;
+  color: white;
+  border: 2px solid white;
+  letter-spacing: 1.5px;
+`;
+const Imageuser = styled.img`
   width: 48px;
   height: 48px;
   border-radius: 50%;
